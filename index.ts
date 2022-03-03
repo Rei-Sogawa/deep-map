@@ -52,24 +52,3 @@ export const typeConvert = <Input, From, To>(
   const output = _typeConvert(value, check, convert);
   return output as TypeConvert<Input, From, To>;
 };
-
-// example
-
-// const input = {
-//   id: 1,
-//   createdAt: new Date(),
-//   deletedAt: null,
-//   creator: {
-//     id: 1,
-//     createdAt: new Date(),
-//   },
-//   likedAtList: [new Date(), new Date()],
-// };
-
-// const output = typeConvert(
-//   input,
-//   (v) => v instanceof Date,
-//   (v: Date) => v.toISOString()
-// );
-
-// console.log(output);
