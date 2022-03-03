@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deepConvert = void 0;
+exports.typeConvert = void 0;
 const isPrimitive = (value) => {
     if (["string", "number", "boolean", "undefined"].includes(typeof value))
         return true;
@@ -11,7 +11,7 @@ const isObject = (value) => {
         return true;
     return false;
 };
-const _deepConvert = (value, check, convert) => {
+const _typeConvert = (value, check, convert) => {
     if (check(value))
         return convert(value);
     if (isPrimitive(value))
@@ -19,16 +19,33 @@ const _deepConvert = (value, check, convert) => {
     if (value === null)
         return value;
     if (Array.isArray(value))
-        return value.map((v) => _deepConvert(v, check, convert));
+        return value.map((v) => _typeConvert(v, check, convert));
     if (isObject(value))
         return Object.entries(value).reduce((p, [k, v]) => ({
             ...p,
-            [k]: _deepConvert(v, check, convert),
+            [k]: _typeConvert(v, check, convert),
         }), {});
-    throw new Error("cannot deepConvert");
+    throw new Error("cannot typeConvert");
 };
-const deepConvert = (value, check, convert) => {
-    const output = _deepConvert(value, check, convert);
+const typeConvert = (value, check, convert) => {
+    const output = _typeConvert(value, check, convert);
     return output;
 };
-exports.deepConvert = deepConvert;
+exports.typeConvert = typeConvert;
+// example
+// const input = {
+//   id: 1,
+//   createdAt: new Date(),
+//   deletedAt: null,
+//   creator: {
+//     id: 1,
+//     createdAt: new Date(),
+//   },
+//   likedAtList: [new Date(), new Date()],
+// };
+// const output = typeConvert(
+//   input,
+//   (v) => v instanceof Date,
+//   (v: Date) => v.toISOString()
+// );
+// console.log(output);
