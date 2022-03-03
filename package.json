@@ -1,10 +1,10 @@
 {
   "private": false,
-  "name": "@rei-sogawa/deep-convert",
+  "name": "@rei-sogawa/type-convert",
   "version": "1.0.0",
   "main": "index.js",
   "types": "index.d.ts",
-  "repository": "https://github.com/Rei-Sogawa/deep-convert.git",
+  "repository": "https://github.com/Rei-Sogawa/type-convert.git",
   "license": "MIT",
   "scripts": {
     "build": "tsc"

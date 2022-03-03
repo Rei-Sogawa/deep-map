@@ -1,11 +1,11 @@
 type Primitive = string | number | boolean | undefined;
 
-declare type DeepMap<Input, From, To> = Input extends From
+declare type TypeConvert<Input, From, To> = Input extends From
   ? To
   : Input extends Primitive | null
   ? Input
   : Input extends {} // Object and Array
-  ? { [K in keyof Input]: DeepMap<Input[K], From, To> }
+  ? { [K in keyof Input]: TypeConvert<Input[K], From, To> }
   : never;
 
 const isPrimitive = (value: unknown) => {
@@ -20,7 +20,7 @@ const isObject = (value: unknown) => {
   return false;
 };
 
-const _deepConvert = <Input, From, To>(
+const _typeConvert = <Input, From, To>(
   value: Input,
   check: (v: unknown) => boolean,
   convert: (from: From) => To
@@ -31,24 +31,45 @@ const _deepConvert = <Input, From, To>(
   if (value === null) return value;
 
   if (Array.isArray(value))
-    return value.map((v) => _deepConvert(v, check, convert));
+    return value.map((v) => _typeConvert(v, check, convert));
   if (isObject(value))
     return Object.entries(value).reduce(
       (p, [k, v]) => ({
         ...p,
-        [k]: _deepConvert(v, check, convert),
+        [k]: _typeConvert(v, check, convert),
       }),
       {}
     );
 
-  throw new Error("cannot deepConvert");
+  throw new Error("cannot typeConvert");
 };
 
-export const deepConvert = <Input, From, To>(
+export const typeConvert = <Input, From, To>(
   value: Input,
   check: (v: unknown) => boolean,
   convert: (from: From) => To
-): DeepMap<Input, From, To> => {
-  const output = _deepConvert(value, check, convert);
-  return output as DeepMap<Input, From, To>;
+): TypeConvert<Input, From, To> => {
+  const output = _typeConvert(value, check, convert);
+  return output as TypeConvert<Input, From, To>;
 };
+
+// example
+
+// const input = {
+//   id: 1,
+//   createdAt: new Date(),
+//   deletedAt: null,
+//   creator: {
+//     id: 1,
+//     createdAt: new Date(),
+//   },
+//   likedAtList: [new Date(), new Date()],
+// };
+
+// const output = typeConvert(
+//   input,
+//   (v) => v instanceof Date,
+//   (v: Date) => v.toISOString()
+// );
+
+// console.log(output);
