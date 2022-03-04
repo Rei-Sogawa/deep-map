@@ -4,7 +4,7 @@ declare type TypeConvert<Input, From, To> = Input extends From
   ? To
   : Input extends Primitive | null
   ? Input
-  : Input extends {} // Object and Array
+  : Input extends {} // Object or Array
   ? { [K in keyof Input]: TypeConvert<Input[K], From, To> }
   : never;
 
