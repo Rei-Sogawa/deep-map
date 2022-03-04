@@ -11,24 +11,25 @@ const isObject = (value) => {
         return true;
     return false;
 };
-const _typeConvert = (value, check, convert) => {
-    if (check(value))
-        return convert(value);
+const _typeConvert = (value, convert) => {
+    const converted = convert(value);
+    if (converted)
+        return converted;
     if (isPrimitive(value))
         return value;
     if (value === null)
         return value;
     if (Array.isArray(value))
-        return value.map((v) => _typeConvert(v, check, convert));
+        return value.map((v) => _typeConvert(v, convert));
     if (isObject(value))
         return Object.entries(value).reduce((p, [k, v]) => ({
             ...p,
-            [k]: _typeConvert(v, check, convert),
+            [k]: _typeConvert(v, convert),
         }), {});
     throw new Error("cannot typeConvert");
 };
-const typeConvert = (value, check, convert) => {
-    const output = _typeConvert(value, check, convert);
+const typeConvert = (value, convert) => {
+    const output = _typeConvert(value, convert);
     return output;
 };
 exports.typeConvert = typeConvert;

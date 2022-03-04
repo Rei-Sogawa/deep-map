@@ -22,21 +22,20 @@ const isObject = (value: unknown) => {
 
 const _typeConvert = <Input, From, To>(
   value: Input,
-  check: (v: unknown) => boolean,
-  convert: (from: From) => To
+  convert: (value: unknown) => To | undefined
 ): unknown => {
-  if (check(value)) return convert(value as unknown as From);
+  const converted = convert(value);
+  if (converted) return converted;
 
   if (isPrimitive(value)) return value;
   if (value === null) return value;
 
-  if (Array.isArray(value))
-    return value.map((v) => _typeConvert(v, check, convert));
+  if (Array.isArray(value)) return value.map((v) => _typeConvert(v, convert));
   if (isObject(value))
     return Object.entries(value).reduce(
       (p, [k, v]) => ({
         ...p,
-        [k]: _typeConvert(v, check, convert),
+        [k]: _typeConvert(v, convert),
       }),
       {}
     );
@@ -46,9 +45,8 @@ const _typeConvert = <Input, From, To>(
 
 export const typeConvert = <Input, From, To>(
   value: Input,
-  check: (v: unknown) => boolean,
-  convert: (from: From) => To
+  convert: (value: unknown) => To | undefined
 ): TypeConvert<Input, From, To> => {
-  const output = _typeConvert(value, check, convert);
+  const output = _typeConvert(value, convert);
   return output as TypeConvert<Input, From, To>;
 };
