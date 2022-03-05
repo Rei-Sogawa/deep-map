@@ -20,7 +20,7 @@ const isObject = (value: unknown) => {
   return false;
 };
 
-const _typeConvert = <Input, From, To>(
+const _typeConvert = <Input, To>(
   value: Input,
   convert: (value: unknown) => To | undefined
 ): unknown => {
@@ -47,6 +47,6 @@ export const typeConvert = <Input, From, To>(
   value: Input,
   convert: (value: unknown) => To | undefined
 ): TypeConvert<Input, From, To> => {
-  const output = _typeConvert(value, convert);
+  const output = _typeConvert<Input, To>(value, convert);
   return output as TypeConvert<Input, From, To>;
 };
