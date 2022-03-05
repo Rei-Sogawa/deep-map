@@ -119,3 +119,64 @@ describe("Date to ISOString", () => {
     });
   });
 });
+
+describe("ISOString to Date", () => {
+  // SEE: https://stackoverflow.com/a/52869830
+  const isISOString = (str: string) => {
+    if (!/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/.test(str)) return false;
+    var d = new Date(str);
+    return d.toISOString() === str;
+  };
+
+  const convert = (value: unknown) => {
+    if (typeof value !== "string") return undefined;
+    return isISOString(value) ? new Date(value) : value;
+  };
+
+  describe("Object", () => {
+    const input = {
+      string: "hello world",
+      number: 0,
+      boolean: true,
+      undefined: undefined,
+      null: null,
+      Date: "2000-01-01T00:00:00.000Z",
+      object: {
+        string: "hello world",
+        number: 0,
+        boolean: true,
+        undefined: undefined,
+        null: null,
+        Date: "2000-01-01T00:00:00.000Z",
+      },
+      array: [
+        "hello world",
+        0,
+        true,
+        undefined,
+        null,
+        "2000-01-01T00:00:00.000Z",
+      ],
+    };
+
+    const output = {
+      string: "hello world",
+      number: 0,
+      boolean: true,
+      undefined: undefined,
+      null: null,
+      Date: new Date("2000-01-01"),
+      object: {
+        string: "hello world",
+        number: 0,
+        boolean: true,
+        undefined: undefined,
+        null: null,
+        Date: new Date("2000-01-01"),
+      },
+      array: ["hello world", 0, true, undefined, null, new Date("2000-01-01")],
+    };
+
+    expect(typeConvert(input, convert)).toStrictEqual(output);
+  });
+});
